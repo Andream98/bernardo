@@ -1,0 +1,33 @@
+{
+  "name": "bernardo",
+  "version": "1.0.0",
+  "description": "Useful discord bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andream98/bernardo.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord-bot"
+  ],
+  "author": "Andrea Martella",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Andream98/bernardo/issues"
+  },
+  "homepage": "https://github.com/Andream98/bernardo#readme",
+  "dependencies": {
+    "@discordjs/rest": "^0.5.0",
+    "discord.js": "^13.8.1",
+    "dotenv": "^16.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.18"
+  }
+}
