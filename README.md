@@ -1,0 +1,2 @@
+# bernardo
+Useful discord bot
