@@ -1,2 +1,2 @@
-# bernardo
+# Bernardo
 Useful discord bot
