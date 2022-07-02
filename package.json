@@ -7,7 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "engines": { "node": "16.x" },
+  "engines": {
+    "node": "16.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Andream98/bernardo.git"
@@ -24,7 +26,9 @@
   },
   "homepage": "https://github.com/Andream98/bernardo#readme",
   "dependencies": {
+    "@discordjs/builders": "^0.15.0",
     "@discordjs/rest": "^0.5.0",
+    "discord-api-types": "^0.36.0",
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1"
   },
