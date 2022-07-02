@@ -7,6 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
+  "engines": { "node": "16.6.x" },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Andream98/bernardo.git"
