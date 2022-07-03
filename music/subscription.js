@@ -124,7 +124,7 @@ const wait = promisify(setTimeout);
 	 * Puts the player in a looping state
 	 * 
 	*/
-	loop() {
+	toggleLoop() {
 		this.loop = !this.loop;
 	}
 

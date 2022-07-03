@@ -7,7 +7,7 @@ module.exports = {
 	async execute(interaction, subscriptions, subscription) {
 		if (subscription) {
 			try {
-				subscription.loop();
+				subscription.toggleLoop();
 				await interaction.followUp(
 					`Loop ${subscription.loop === true ? "attivato" : "disattivato"}`
 				);
