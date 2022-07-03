@@ -14,7 +14,7 @@ const noop = () => {};
  * we use tracks as they don't pre-emptively load the videos. Instead, once a Track is taken from the
  * queue, it is converted into an AudioResource just in time for playback.
  */
-export class Track {
+ module.exports = class Track {
 	url;
 	title;
 	onStart;

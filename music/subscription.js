@@ -16,7 +16,7 @@ const wait = promisify(setTimeout);
  * A MusicSubscription exists for each active VoiceConnection. Each subscription has its own audio player and queue,
  * and it also attaches logic to the audio player and voice connection for error handling and reconnection logic.
  */
-export class MusicSubscription {
+ module.exports = class MusicSubscription {
 	voiceConnection;
 	audioPlayer;
 	queue = [];
