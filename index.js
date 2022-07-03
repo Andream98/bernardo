@@ -11,6 +11,9 @@ const client = new Client({
 	],
 });
 
+let subscriptions = new Map(),
+	subscription = subscriptions.get(interaction.guildId);
+
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
@@ -34,7 +37,9 @@ for (const file of eventFiles) {
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
-		client.on(event.name, (...args) => event.execute(client, ...args));
+		client.on(event.name, (...args) =>
+			event.execute(client, ...args, subscriptions, subscription)
+		);
 	}
 }
 

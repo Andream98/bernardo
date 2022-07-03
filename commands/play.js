@@ -15,14 +15,10 @@ module.exports = {
 		.addStringOption((option) =>
 			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
-	async execute(interaction) {
-		await interaction.response.defer();
-		
+	async execute(interaction, subscriptions, subscription) {
+    await interaction.deferReply({ ephemeral: true });
+    
 		const url = interaction.options.get("url")?.value;
-
-		const subscriptions = new Map();
-
-		let subscription = subscriptions.get(interaction.guildId);
 
 		if (!subscription) {
 			if (
@@ -45,7 +41,7 @@ module.exports = {
 		// If there is no subscription, tell the user they need to join a channel.
 		if (!subscription) {
 			await interaction.followUp(
-				"Join a voice channel and then try that again!"
+				"Devi entrare in un canale vocale per eseguire questo comando"
 			);
 			return;
 		}
@@ -60,7 +56,7 @@ module.exports = {
 		} catch (error) {
 			console.warn(error);
 			await interaction.followUp(
-				"Failed to join voice channel within 20 seconds, please try again later!"
+				"Non essere triste, non sono riuscito a entrare nel canale"
 			);
 			return;
 		}
@@ -70,28 +66,27 @@ module.exports = {
 			const track = await Track.from(url, {
 				onStart() {
 					interaction
-						.followUp({ content: "Now playing!", ephemeral: true })
+						.followUp({ content: `Vuole sentire: \n ${url}` })
 						.catch(console.warn);
 				},
 				onFinish() {
 					interaction
-						.followUp({ content: "Now finished!", ephemeral: true })
 						.catch(console.warn);
 				},
 				onError(error) {
 					console.warn(error);
 					interaction
-						.followUp({ content: `Error: ${error.message}`, ephemeral: true })
+						.followUp({ content: `Errore: ${error.message}`, ephemeral: true })
 						.catch(console.warn);
 				},
 			});
 			// Enqueue the track and reply a success message to the user
 			subscription.enqueue(track);
-			await interaction.followUp(`Enqueued **${track.title}**`);
+			await interaction.followUp(`Ho aggiunto in coda **${track.title}**`);
 		} catch (error) {
 			console.warn(error);
 			await interaction.followUp(
-				"Failed to play track, please try again later!"
+				`Uffa, non sono riuscito a aggiungere in coda questa canzone`
 			);
 		}
 	},

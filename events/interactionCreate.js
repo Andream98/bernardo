@@ -1,6 +1,6 @@
 module.exports = {
 	name: "interactionCreate",
-	async execute(client, interaction) {
+	async execute(client, interaction, subscriptions, subscription) {
 		if (!interaction.isCommand() || !interaction.guildId) return;
 
 		const command = client.commands.get(interaction.commandName);
@@ -8,7 +8,7 @@ module.exports = {
 		if (!command) return;
 
 		try {
-			await command.execute(interaction);
+			await command.execute(interaction, subscriptions, subscription);
 		} catch (error) {
 			console.error(error);
 			await interaction.reply({
