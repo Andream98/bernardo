@@ -1,4 +1,4 @@
-const { GuildMember } = require("discord.js");
+const { GuildMember, Interaction } = require("discord.js");
 const {
 	entersState,
 	joinVoiceChannel,
@@ -16,6 +16,8 @@ module.exports = {
 			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
 	async execute(interaction) {
+		await interaction.response.defer();
+		
 		const url = interaction.options.get("url")?.value;
 
 		const subscriptions = new Map();
