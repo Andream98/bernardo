@@ -8,12 +8,15 @@ module.exports = {
 		if (subscription) {
 			try {
 				subscription.toggleLoop();
-				await interaction.followUp(
-					`Loop ${subscription.loop === true ? "attivato" : "disattivato"}`
-				);
+				await interaction.reply({
+					content: `Loop ${
+						subscription.loop === true ? "attivato" : "disattivato"
+					}`,
+					ephemeral: true,
+				});
 			} catch (error) {
 				console.warn(error);
-				await interaction.followUp(
+				await interaction.reply(
 					`Uffa, non sono riuscito a aggiungere in coda questa canzone`
 				);
 			}
