@@ -11,7 +11,7 @@ module.exports = {
 			// listener defined in music/subscription.ts, transitions into the Idle state mean the next track from the queue
 			// will be loaded and played.
 			subscription.audioPlayer.stop();
-			await interaction.reply(`${currentSong} saltata`);
+			await interaction.reply(`**${interaction.user.username}** ha saltato: \n > ${currentSong}`);
 		} else {
 			await interaction.reply('Ma si scem, non c\'è nulla in riproduzione');
 		}
