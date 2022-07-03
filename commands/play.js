@@ -16,7 +16,6 @@ module.exports = {
 			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
 	async execute(interaction) {
-		await interaction.defer();
 		const url = interaction.options.get("url")?.value;
 
 		const subscriptions = new Map();
