@@ -1,14 +1,11 @@
 const {
-	AudioPlayer,
 	AudioPlayerStatus,
-	AudioResource,
 	createAudioPlayer,
 	entersState,
-	VoiceConnection,
 	VoiceConnectionDisconnectReason,
 	VoiceConnectionStatus,
-} = require('@discordjs/voice');
-const { promisify } = require('node:util');
+} = require("@discordjs/voice");
+const { promisify } = require("node:util");
 
 const wait = promisify(setTimeout);
 
@@ -16,22 +13,26 @@ const wait = promisify(setTimeout);
  * A MusicSubscription exists for each active VoiceConnection. Each subscription has its own audio player and queue,
  * and it also attaches logic to the audio player and voice connection for error handling and reconnection logic.
  */
- module.exports = class MusicSubscription {
+module.exports = class MusicSubscription {
 	voiceConnection;
 	audioPlayer;
 	queue = [];
 	queueLock = false;
 	readyLock = false;
 	loop = false;
+	lastTrack;
 
 	constructor(voiceConnection) {
 		this.voiceConnection = voiceConnection;
 		this.audioPlayer = createAudioPlayer();
 		this.queue = [];
 
-		this.voiceConnection.on('stateChange', async (_, newState) => {
+		this.voiceConnection.on("stateChange", async (_, newState) => {
 			if (newState.status === VoiceConnectionStatus.Disconnected) {
-				if (newState.reason === VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
+				if (
+					newState.reason === VoiceConnectionDisconnectReason.WebSocketClose &&
+					newState.closeCode === 4014
+				) {
 					/**
 					 * If the WebSocket closed with a 4014 code, this means that we should not manually attempt to reconnect,
 					 * but there is a chance the connection will recover itself if the reason of the disconnect was due to
@@ -40,7 +41,11 @@ const wait = promisify(setTimeout);
 					 * the voice connection.
 					 */
 					try {
-						await entersState(this.voiceConnection, VoiceConnectionStatus.Connecting, 5_000);
+						await entersState(
+							this.voiceConnection,
+							VoiceConnectionStatus.Connecting,
+							5_000
+						);
 						// Probably moved voice channel
 					} catch {
 						this.voiceConnection.destroy();
@@ -65,7 +70,8 @@ const wait = promisify(setTimeout);
 				this.stop();
 			} else if (
 				!this.readyLock &&
-				(newState.status === VoiceConnectionStatus.Connecting || newState.status === VoiceConnectionStatus.Signalling)
+				(newState.status === VoiceConnectionStatus.Connecting ||
+					newState.status === VoiceConnectionStatus.Signalling)
 			) {
 				/**
 				 * In the Signalling or Connecting states, we set a 20 second time limit for the connection to become ready
@@ -74,9 +80,17 @@ const wait = promisify(setTimeout);
 				 */
 				this.readyLock = true;
 				try {
-					await entersState(this.voiceConnection, VoiceConnectionStatus.Ready, 20_000);
+					await entersState(
+						this.voiceConnection,
+						VoiceConnectionStatus.Ready,
+						20_000
+					);
 				} catch {
-					if (this.voiceConnection.state.status !== VoiceConnectionStatus.Destroyed) this.voiceConnection.destroy();
+					if (
+						this.voiceConnection.state.status !==
+						VoiceConnectionStatus.Destroyed
+					)
+						this.voiceConnection.destroy();
 				} finally {
 					this.readyLock = false;
 				}
@@ -84,19 +98,24 @@ const wait = promisify(setTimeout);
 		});
 
 		// Configure audio player
-		this.audioPlayer.on('stateChange', (oldState, newState) => {
-			if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
+		this.audioPlayer.on("stateChange", (oldState, newState) => {
+			if (
+				newState.status === AudioPlayerStatus.Idle &&
+				oldState.status !== AudioPlayerStatus.Idle
+			) {
 				// If the Idle state is entered from a non-Idle state, it means that an audio resource has finished playing.
 				// The queue is then processed to start playing the next track, if one is available.
-				(oldState.resource).metadata.onFinish();
+				oldState.resource.metadata.onFinish();
 				void this.processQueue();
 			} else if (newState.status === AudioPlayerStatus.Playing) {
 				// If the Playing state has been entered, then a new track has started playback.
-				(newState.resource).metadata.onStart();
+				newState.resource.metadata.onStart();
 			}
 		});
 
-		this.audioPlayer.on('error', (error) => (error.resource).metadata.onError(error));
+		this.audioPlayer.on("error", (error) =>
+			error.resource.metadata.onError(error)
+		);
 
 		voiceConnection.subscribe(this.audioPlayer);
 	}
@@ -122,8 +141,8 @@ const wait = promisify(setTimeout);
 
 	/**
 	 * Puts the player in a looping state
-	 * 
-	*/
+	 *
+	 */
 	toggleLoop() {
 		this.loop = !this.loop;
 	}
@@ -133,7 +152,10 @@ const wait = promisify(setTimeout);
 	 */
 	async processQueue() {
 		// If the queue is locked (already being processed), is empty, or the audio player is already playing something, return
-		if (this.queueLock || this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) {
+		if (
+			this.queueLock ||
+			this.audioPlayer.state.status !== AudioPlayerStatus.Idle
+		) {
 			return;
 		}
 		// Lock the queue to guarantee safe access
@@ -141,22 +163,25 @@ const wait = promisify(setTimeout);
 
 		let nextTrack;
 
-		console.log(this.loop);
-		console.log(this.queue);
-
 		if (this.loop === true) {
-			// Take the first song in queue without removing it
-			nextTrack = this.queue[0];
+			// Take the last track or the first song in queue
+			nextTrack = this.lastTrack || this.queue[0];
 		} else {
 			// Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
 			nextTrack = this.queue.shift();
 		}
-		
+
+		if (typeof nextTrack === 'undefined') {
+			this.queueLock = false;
+			return;
+		}
+
 		try {
 			// Attempt to convert the Track into an AudioResource (i.e. start streaming the video)
 			const resource = await nextTrack.createAudioResource();
 			this.audioPlayer.play(resource);
 			this.queueLock = false;
+			this.lastTrack = nextTrack;
 		} catch (error) {
 			// If an error occurred, try the next item of the queue instead
 			nextTrack.onError(error);
@@ -164,4 +189,4 @@ const wait = promisify(setTimeout);
 			return this.processQueue();
 		}
 	}
-}
+};

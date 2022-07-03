@@ -3,9 +3,9 @@ const {
 	entersState,
 	joinVoiceChannel,
 	VoiceConnectionStatus,
-} =  require('@discordjs/voice');
-const MusicSubscription = require('../music/subscription');
-const Track = require('../music/track');
+} = require("@discordjs/voice");
+const MusicSubscription = require("../music/subscription");
+const Track = require("../music/track");
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
@@ -16,8 +16,8 @@ module.exports = {
 			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
 	async execute(interaction, subscriptions, subscription) {
-    await interaction.deferReply({ ephemeral: true });
-    
+		await interaction.deferReply({ ephemeral: true });
+
 		const url = interaction.options.get("url")?.value;
 
 		if (!subscription) {
@@ -65,13 +65,15 @@ module.exports = {
 			// Attempt to create a Track from the user's video URL
 			const track = await Track.from(url, {
 				onStart() {
-					interaction
-						.followUp({ content: `Vuole sentire: \n ${url}` })
-						.catch(console.warn);
+					if (subscription.loop === false) {
+						interaction
+							.followUp({ content: `Vuole sentire: \n ${url}` })
+							.catch(console.warn);
+					}
 				},
 				onFinish() {
 					subscription.processQueue();
-					console.log('Song finished playing');
+					console.log("Song finished playing");
 				},
 				onError(error) {
 					console.warn(error);
