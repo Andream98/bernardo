@@ -1,10 +1,10 @@
-import { GuildMember } from "discord.js";
-import {
+const { GuildMember } = require("discord.js");
+const {
 	entersState,
 	joinVoiceChannel,
 	VoiceConnectionStatus,
-} from '@discordjs/voice';
-import { MusicSubscription } from './music/subscription';
+} =  require('@discordjs/voice');
+const { MusicSubscription } = require('./music/subscription');
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
