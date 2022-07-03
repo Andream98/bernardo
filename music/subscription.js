@@ -141,6 +141,9 @@ const wait = promisify(setTimeout);
 
 		let nextTrack;
 
+		console.log(this.loop);
+		console.log(this.queue);
+
 		if (this.loop === true) {
 			// Take the first song in queue without removing it
 			nextTrack = this.queue[0];
