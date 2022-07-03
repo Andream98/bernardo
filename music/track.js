@@ -1,6 +1,6 @@
 const { getInfo } = require('ytdl-core');
 const { AudioResource, createAudioResource, demuxProbe } = require('@discordjs/voice');
-const { raw } = require('youtube-dl-exec');
+const ytdl = require('youtube-dl-exec');
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -34,7 +34,7 @@ const noop = () => {};
 	 */
 	createAudioResource() {
 		return new Promise((resolve, reject) => {
-			const process = raw(
+			const process = ytdl(
 				this.url,
 				{
 					o: '-',
