@@ -4,7 +4,7 @@ const {
 	joinVoiceChannel,
 	VoiceConnectionStatus,
 } =  require('@discordjs/voice');
-const { MusicSubscription } = require('./music/subscription');
+const { MusicSubscription } = require('../music/subscription');
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
