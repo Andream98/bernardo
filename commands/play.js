@@ -70,8 +70,7 @@ module.exports = {
 						.catch(console.warn);
 				},
 				onFinish() {
-					interaction
-						.catch(console.warn);
+					console.log('Song finished playing');
 				},
 				onError(error) {
 					console.warn(error);
