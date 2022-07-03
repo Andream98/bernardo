@@ -12,7 +12,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("play")
 		.setDescription("Riproduce una canzone da un URL di YouTube")
-		.addUserOption((option) =>
+		.addStringOption((option) =>
 			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
 	async execute(interaction) {
