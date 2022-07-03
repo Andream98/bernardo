@@ -22,6 +22,7 @@ const wait = promisify(setTimeout);
 	queue = [];
 	queueLock = false;
 	readyLock = false;
+	loop = false;
 
 	constructor(voiceConnection) {
 		this.voiceConnection = voiceConnection;
@@ -120,6 +121,14 @@ const wait = promisify(setTimeout);
 	}
 
 	/**
+	 * Puts the player in a looping state
+	 * 
+	*/
+	loop() {
+		this.loop = !this.loop;
+	}
+
+	/**
 	 * Attempts to play a Track from the queue.
 	 */
 	async processQueue() {
@@ -130,8 +139,16 @@ const wait = promisify(setTimeout);
 		// Lock the queue to guarantee safe access
 		this.queueLock = true;
 
-		// Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
-		const nextTrack = this.queue.shift();
+		let nextTrack;
+
+		if (this.loop === true) {
+			// Take the first song in queue without removing it
+			nextTrack = this.queue[0];
+		} else {
+			// Take the first item from the queue. This is guaranteed to exist due to the non-empty check above.
+			nextTrack = this.queue.shift();
+		}
+		
 		try {
 			// Attempt to convert the Track into an AudioResource (i.e. start streaming the video)
 			const resource = await nextTrack.createAudioResource();
