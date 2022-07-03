@@ -70,6 +70,7 @@ module.exports = {
 						.catch(console.warn);
 				},
 				onFinish() {
+					subscription.processQueue();
 					console.log('Song finished playing');
 				},
 				onError(error) {
