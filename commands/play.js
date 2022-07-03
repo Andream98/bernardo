@@ -5,6 +5,7 @@ const {
 	VoiceConnectionStatus,
 } =  require('@discordjs/voice');
 const { MusicSubscription } = require('../music/subscription');
+const { Track } = require('../music/track');
 const { SlashCommandBuilder } = require("@discordjs/builders");
 
 module.exports = {
@@ -12,11 +13,11 @@ module.exports = {
 		.setName("play")
 		.setDescription("Riproduce una canzone da un URL di YouTube")
 		.addUserOption((option) =>
-			option.setName("URL").setDescription("L'URL di YouTube").setRequired(true)
+			option.setName("url").setDescription("URL di YouTube").setRequired(true)
 		),
 	async execute(interaction) {
 		await interaction.defer();
-		const URL = interaction.options.get("URL")?.value;
+		const url = interaction.options.get("url")?.value;
 
 		const subscriptions = new Map();
 
@@ -65,7 +66,7 @@ module.exports = {
 
 		try {
 			// Attempt to create a Track from the user's video URL
-			const track = await Track.from(URL, {
+			const track = await Track.from(url, {
 				onStart() {
 					interaction
 						.followUp({ content: "Now playing!", ephemeral: true })
