@@ -11,8 +11,7 @@ const client = new Client({
 	],
 });
 
-let subscriptions = new Map(),
-	subscription = subscriptions.get(interaction.guildId);
+let subscriptions = new Map();
 
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, "commands");
@@ -38,7 +37,7 @@ for (const file of eventFiles) {
 		client.once(event.name, (...args) => event.execute(...args));
 	} else {
 		client.on(event.name, (...args) =>
-			event.execute(client, ...args, subscriptions, subscription)
+			event.execute(client, ...args, subscriptions)
 		);
 	}
 }
